@@ -2,33 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour {
-
-    public GameObject target;
-
+public class GuidedBullet : Bullet
+{
     private Vector3 startPosition;
 
 	// Use this for initialization
 	void Start () {
-        target = GameObject.Find("DumpEnemy");
         startPosition = transform.position;
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (target == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Vector3 dir = target.transform.position - transform.position;
         float distanceThisFrame = 20F * Time.deltaTime;
 
         transform.Translate(dir.normalized * distanceThisFrame, Space.World);
     }
 
+    public override void Init(Transform target, float damage)
+    {
+        this.target = target;
+        this.damage = damage;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
         if (collision.tag == "Enemy")
         {
-            Debug.Log("d");
-            Destroy(this.gameObject);
+            collision.GetComponent<Enemy>().Attacked(damage);
+            Destroy(gameObject);
         }
     }
 }

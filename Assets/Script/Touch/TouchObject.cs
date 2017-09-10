@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathObject : MonoBehaviour {
-
-    public Vector3 path;
+public class TouchObject : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

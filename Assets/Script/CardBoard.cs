@@ -18,13 +18,15 @@ public class CardBoard : MonoBehaviour {
     // Suffled Card Index
     private List<int> suffledCardIndexs;
     
-    // Board State
-    private bool isBoardOpen;
     //TurretPrefabs
     private GameObject[] turretsPrefabs;
 
     // Poker Rank
     private PokerRank rank;
+
+
+    // Board State
+    public bool isBoardOpen;
 
     #region Test Option Variable
     [Header("Test Option")]
@@ -34,10 +36,6 @@ public class CardBoard : MonoBehaviour {
     private PokerRank testRank;
     private int cardCountbyShape;
     #endregion
-    
-
-    // Turret Will Set This Tile Position
-    private Transform currentTile; 
 
     private void Start()
     {
@@ -79,16 +77,12 @@ public class CardBoard : MonoBehaviour {
         cardCountbyShape = cardSprites.Length / 4;
     }
 
-    public void SetCard(Transform currentTile)
+    public void SetCard()
     {
         if (isBoardOpen)
             return;
 
-        this.currentTile = currentTile;
-
         isBoardOpen = true;
-
-        SetBoardActive(true);
 
         suffledCardIndexs.Clear();
 
@@ -204,6 +198,8 @@ public class CardBoard : MonoBehaviour {
                 suffledCardIndexs.Remove(spriteIndex);
             }
         }
+
+        SetBoardActive(true);
     }
 
     private void SetBoardActive(bool active)
@@ -220,6 +216,7 @@ public class CardBoard : MonoBehaviour {
         }
 
         rank = GetPokerRank();
+        rankText.text = rank.ToString();
     }
 
     public void BulidTower()
@@ -297,11 +294,11 @@ public class CardBoard : MonoBehaviour {
                 break;
         }
 
-        TowerTile tile = currentTile.GetComponent<TowerTile>();
-        Instantiate(turretsPrefabs[turretLevel], new Vector3(currentTile.position.x, currentTile.position.y, turretsPrefabs[turretLevel].transform.position.z), Quaternion.identity);
+        GameObject turret = turretsPrefabs[turretLevel];
+        Turret turretObject = Instantiate(turret, new Vector3(0, 0, turret.transform.position.z), Quaternion.identity).GetComponent<Turret>();
+        turretObject.Init(turretLevel);
 
-        rankText.text = rank.ToString();
-        Debug.Log(rank);
+        GameManager.Instance.StartStage();
     }
 
     public void ChangeCard(int cardIndex)
@@ -319,6 +316,7 @@ public class CardBoard : MonoBehaviour {
         card.transform.GetChild(0).gameObject.SetActive(false);
 
         rank = GetPokerRank();
+        rankText.text = rank.ToString();
     }
 
     // Not Use 3,4,5,6
