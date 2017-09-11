@@ -23,7 +23,7 @@ public class PromptBullet : Bullet
             return;
         }
 
-        time += Time.deltaTime;
+        time += GameManager.Instance.GetDeltaTimeByGameSpeed();
         transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
 
         if (time > maxTime)

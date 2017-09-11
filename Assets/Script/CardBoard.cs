@@ -24,7 +24,6 @@ public class CardBoard : MonoBehaviour {
     // Poker Rank
     private PokerRank rank;
 
-
     // Board State
     public bool isBoardOpen;
 
@@ -74,6 +73,7 @@ public class CardBoard : MonoBehaviour {
         suffledCardIndexs = new List<int>();
 
         isBoardOpen = false;
+        
         cardCountbyShape = cardSprites.Length / 4;
     }
 
@@ -219,7 +219,7 @@ public class CardBoard : MonoBehaviour {
         rankText.text = rank.ToString();
     }
 
-    public void BulidTower()
+    public void BulidTurret()
     {
         SetBoardActive(false);
         isBoardOpen = false;
@@ -294,11 +294,9 @@ public class CardBoard : MonoBehaviour {
                 break;
         }
 
-        GameObject turret = turretsPrefabs[turretLevel];
-        Turret turretObject = Instantiate(turret, new Vector3(0, 0, turret.transform.position.z), Quaternion.identity).GetComponent<Turret>();
-        turretObject.Init(turretLevel);
-
-        GameManager.Instance.StartStage();
+        GameManager.Instance.turretLevel = turretLevel;
+        GameManager.Instance.setTurret = turretsPrefabs[turretLevel];
+        GameManager.Instance.isTurretSet = true;
     }
 
     public void ChangeCard(int cardIndex)

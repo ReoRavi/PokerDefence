@@ -20,7 +20,7 @@ public class GuidedBullet : Bullet
         }
 
         Vector3 dir = target.transform.position - transform.position;
-        float distanceThisFrame = 20F * Time.deltaTime;
+        float distanceThisFrame = 20F * GameManager.Instance.GetDeltaTimeByGameSpeed();
 
         transform.Translate(dir.normalized * distanceThisFrame, Space.World);
     }

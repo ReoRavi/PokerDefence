@@ -6,9 +6,7 @@ public class Turret : MonoBehaviour {
 
     public Transform target;
 
-    [SerializeField]
     private float attackSpeed;
-    [SerializeField]
     private int attackCount;
 
     private GameObject bullet;
@@ -17,13 +15,24 @@ public class Turret : MonoBehaviour {
     public bool move;
     public Vector3 moveTarget;
 
-    [SerializeField]
     private int damage;
 
-	// Use this for initialization
-	void Start () {
+    private GameObject selectImage;
+
+    [SerializeField]
+    private float collisionTime;
+    [SerializeField]
+    private bool collisionState;
+
+    // Use this for initialization
+    void Start () {
         createTime = 0;
         move = false;
+        selectImage = transform.Find("TurretSelect").gameObject;
+        selectImage.SetActive(false);
+
+        collisionTime = 0;
+        collisionState = false;
     }
 
     public void Init(int turretLevel)
@@ -41,29 +50,37 @@ public class Turret : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        createTime += Time.deltaTime;
+        if (target != null)
+        {
+            Vector3 dir = transform.position - target.position;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        }
 
-        if (GameManager.Instance.currentTurret == this)
-            GameManager.Instance.SetTurretImagePosition(transform.position.x, transform.position.y);
+        createTime += GameManager.Instance.GetDeltaTimeByGameSpeed();
 
         if (move)
         {
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveTarget.x, moveTarget.y, transform.position.z), 0.1F);
             float dis = Vector2.Distance(transform.position, moveTarget);
+            //selectImage.transform.position = new Vector3(transform.position.x, transform.position.y, selectImage.transform.position.z);
 
-            if (dis < 0.01f)
+            if (dis < 0.01f || collisionTime > 2F)
             {
                 move = false;
+                collisionTime = 0;
+                collisionState = false;
+                ActiveSelectImage(false);
             }
+
+            if (collisionState)
+                collisionTime += GameManager.Instance.GetDeltaTimeByGameSpeed();
+
         }
         else
         {
             if (createTime > attackSpeed && target != null)
             {
-                Vector3 dir = transform.position - target.position;
-                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
                 for (int i = 0; i < attackCount; i++)
                 {
                     Bullet bulletObject = Instantiate(bullet, new Vector3(transform.position.x, transform.position.y, bullet.transform.position.z), Quaternion.identity).GetComponent<Bullet>();
@@ -75,26 +92,37 @@ public class Turret : MonoBehaviour {
         }
     }
 
-    public void Move(Vector3 moveTarget)
+    //public void Move(Vector3 moveTarget)
+    //{
+    //    move = true;
+    //    GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+    //    GetComponent<Rigidbody2D>().isKinematic = false;
+    //    this.moveTarget = moveTarget;
+    //}
+
+    public void ActiveSelectImage(bool active)
     {
-        move = true;
-        GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-        GetComponent<Rigidbody2D>().isKinematic = false;
-        this.moveTarget = moveTarget;
+        if (!active)
+            GameManager.Instance.selectedTurrets.Remove(this);
+
+        selectImage.SetActive(active);
     }
 
     private void OnMouseDown()
     {
-        Turret beforeTurret = GameManager.Instance.currentTurret;
+        Turret[] beforeTurret = GameManager.Instance.selectedTurrets.ToArray();
 
-        if (beforeTurret != null)
+        if (beforeTurret.Length != 0)
         {
-            if (beforeTurret.move)
-                StartCoroutine(KinematicCorutine(beforeTurret));
-            else
+            foreach (Turret turret in beforeTurret)
             {
-                beforeTurret.GetComponent<Rigidbody2D>().isKinematic = true;
-                beforeTurret.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                if (turret.move)
+                    StartCoroutine(KinematicCorutine(turret));
+                else
+                {
+                    turret.GetComponent<Rigidbody2D>().isKinematic = true;
+                    turret.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                }
             }
         }
 
@@ -109,8 +137,9 @@ public class Turret : MonoBehaviour {
             GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
         }
 
-        GameManager.Instance.currentTurret = this;
-        GameManager.Instance.SetTurretImagePosition(transform.position.x, transform.position.y);
+        GameManager.Instance.selectedTurrets.Clear();
+        GameManager.Instance.selectedTurrets.Add(this);
+        ActiveSelectImage(true);
     }
 
     private IEnumerator KinematicCorutine(Turret turret)
@@ -127,6 +156,23 @@ public class Turret : MonoBehaviour {
             }
 
             yield return null;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Turret")
+        {
+            collisionState = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Turret")
+        {
+            collisionTime = 0;
+            collisionState = false;
         }
     }
 }

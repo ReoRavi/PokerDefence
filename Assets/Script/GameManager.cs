@@ -47,6 +47,20 @@ public class GameManager : MonoBehaviour {
     // Upgrade Cost
     private int upgradeCost;
 
+    [SerializeField]
+    public List<Turret> turrets;
+    [SerializeField]
+    public List<Turret> selectedTurrets;
+
+    // Turret Set State
+    public bool isTurretSet;
+    // Turret Prefab
+    public GameObject setTurret;
+    // Turret Level
+    public int turretLevel;
+
+    public float gameSpeed;
+
     #region SystemUI
     // Timer
     private Text timerText;
@@ -58,9 +72,6 @@ public class GameManager : MonoBehaviour {
     private Text upgradeText;
     #endregion
 
-    [SerializeField]
-    public Turret currentTurret;
-
     public GameObject selectTurretImage;
 
     // Use this for initialization
@@ -71,7 +82,7 @@ public class GameManager : MonoBehaviour {
 
         enemyList = new List<GameObject>();
         enemyCurrentCount = 0;
-        enemyMaxCount = 5;
+        enemyMaxCount = 1;
         enemyAllCreated = false;
 
         stageCount = 0;
@@ -101,11 +112,18 @@ public class GameManager : MonoBehaviour {
         cardBoard = GameObject.Find("CardBoard").GetComponent<CardBoard>();
         cardBoard.SetCard();
 
-
-
         selectTurretImage = GameObject.Find("TurretSelect");
 
         state = eGameState.Wait;
+
+        turrets = new List<Turret>();
+        selectedTurrets = new List<Turret>();
+
+        isTurretSet = false;
+        setTurret = null;
+        turretLevel = 0;
+
+        gameSpeed = 16;
     }
 
     // Update is called once per frame
@@ -126,14 +144,9 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void SetTurretImagePosition(float x, float y)
-    {
-        selectTurretImage.transform.position = new Vector3(x, y, -3);
-    }
-
     private void SetTimer()
     {
-        time -= Time.deltaTime;
+        time -= GetDeltaTimeByGameSpeed();
 
         float min = time / 60;
         string minString = "";
@@ -172,6 +185,7 @@ public class GameManager : MonoBehaviour {
 
         foreach (GameObject enemy in enemyList)
         {
+            Destroy(enemy.GetComponent<Enemy>().hpBar);
             Destroy(enemy.gameObject);
         }
 
@@ -239,6 +253,33 @@ public class GameManager : MonoBehaviour {
             upgradeText.text = upgradeCost.ToString();
         }
     }
+
+    public float GetDeltaTimeByGameSpeed()
+    {
+        return Time.deltaTime * gameSpeed;
+    }
+
+    //// 위에서 아래
+    ////yPos > startPos.y - (bound.y / 2) && yPos < startPos.y + (bound.y / 2))
+    //// 왼쪽에서 오른쪽
+    //// xPos < startPos.x - (bound.x / 2) && xPos > startPos.x + (bound.x / 2)
+    //public void SelectDragedTurret(Vector2 startPos, Vector2 bound, int xDirection, int yDirection)
+    //{
+    //    selectedTurrets.Clear();
+
+    //    foreach (Turret turret in turrets)
+    //    {
+    //        float xPos = turret.transform.position.x;
+    //        float yPos = turret.transform.position.y;
+
+    //        if (xPos < startPos.x - ((bound.x / 2) * xDirection) && xPos > startPos.x + ((bound.x / 2) * xDirection) &&
+    //            yPos > startPos.y - ((bound.y / 2) * yDirection) && yPos < startPos.y + ((bound.y / 2) * yDirection))
+    //        {
+    //            turret.ActiveSelectImage(true);
+    //            selectedTurrets.Add(turret);
+    //        }
+    //    }
+    //}
 
     private static GameManager _instance;
     public static GameManager Instance

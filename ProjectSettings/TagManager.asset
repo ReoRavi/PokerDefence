@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PathZone
   - Enemy
+  - Turret
   layers:
   - Default
   - TransparentFX
