@@ -47,18 +47,6 @@ public class GameManager : MonoBehaviour {
     // Upgrade Cost
     private int upgradeCost;
 
-    [SerializeField]
-    public List<Turret> turrets;
-    [SerializeField]
-    public List<Turret> selectedTurrets;
-
-    // Turret Set State
-    public bool isTurretSet;
-    // Turret Prefab
-    public GameObject setTurret;
-    // Turret Level
-    public int turretLevel;
-
     public float gameSpeed;
 
     #region SystemUI
@@ -116,14 +104,10 @@ public class GameManager : MonoBehaviour {
 
         state = eGameState.Wait;
 
-        turrets = new List<Turret>();
-        selectedTurrets = new List<Turret>();
+        //turrets = new List<Turret>();
+        //selectedTurrets = new List<Turret>();
 
-        isTurretSet = false;
-        setTurret = null;
-        turretLevel = 0;
-
-        gameSpeed = 16;
+        gameSpeed = 1;
     }
 
     // Update is called once per frame
@@ -258,28 +242,6 @@ public class GameManager : MonoBehaviour {
     {
         return Time.deltaTime * gameSpeed;
     }
-
-    //// 위에서 아래
-    ////yPos > startPos.y - (bound.y / 2) && yPos < startPos.y + (bound.y / 2))
-    //// 왼쪽에서 오른쪽
-    //// xPos < startPos.x - (bound.x / 2) && xPos > startPos.x + (bound.x / 2)
-    //public void SelectDragedTurret(Vector2 startPos, Vector2 bound, int xDirection, int yDirection)
-    //{
-    //    selectedTurrets.Clear();
-
-    //    foreach (Turret turret in turrets)
-    //    {
-    //        float xPos = turret.transform.position.x;
-    //        float yPos = turret.transform.position.y;
-
-    //        if (xPos < startPos.x - ((bound.x / 2) * xDirection) && xPos > startPos.x + ((bound.x / 2) * xDirection) &&
-    //            yPos > startPos.y - ((bound.y / 2) * yDirection) && yPos < startPos.y + ((bound.y / 2) * yDirection))
-    //        {
-    //            turret.ActiveSelectImage(true);
-    //            selectedTurrets.Add(turret);
-    //        }
-    //    }
-    //}
 
     private static GameManager _instance;
     public static GameManager Instance

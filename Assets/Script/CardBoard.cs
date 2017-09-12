@@ -294,9 +294,11 @@ public class CardBoard : MonoBehaviour {
                 break;
         }
 
-        GameManager.Instance.turretLevel = turretLevel;
-        GameManager.Instance.setTurret = turretsPrefabs[turretLevel];
-        GameManager.Instance.isTurretSet = true;
+        GameObject turretObject = turretsPrefabs[turretLevel];
+
+        Instantiate(turretObject, new Vector3(0, 0, turretObject.transform.position.z), Quaternion.identity).GetComponent<Turret>().Init(turretLevel);
+
+        GameManager.Instance.StartStage();
     }
 
     public void ChangeCard(int cardIndex)

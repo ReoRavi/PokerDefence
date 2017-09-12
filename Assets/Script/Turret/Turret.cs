@@ -13,16 +13,10 @@ public class Turret : MonoBehaviour {
     private float createTime;
 
     public bool move;
-    public Vector3 moveTarget;
 
     private int damage;
 
     private GameObject selectImage;
-
-    [SerializeField]
-    private float collisionTime;
-    [SerializeField]
-    private bool collisionState;
 
     // Use this for initialization
     void Start () {
@@ -30,9 +24,6 @@ public class Turret : MonoBehaviour {
         move = false;
         selectImage = transform.Find("TurretSelect").gameObject;
         selectImage.SetActive(false);
-
-        collisionTime = 0;
-        collisionState = false;
     }
 
     public void Init(int turretLevel)
@@ -49,7 +40,7 @@ public class Turret : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
         if (target != null)
         {
             Vector3 dir = transform.position - target.position;
@@ -59,23 +50,12 @@ public class Turret : MonoBehaviour {
 
         createTime += GameManager.Instance.GetDeltaTimeByGameSpeed();
 
-        if (move)
+
+        if (move && TouchManager.Instance.unitMove)
         {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveTarget.x, moveTarget.y, transform.position.z), 0.1F);
-            float dis = Vector2.Distance(transform.position, moveTarget);
-            //selectImage.transform.position = new Vector3(transform.position.x, transform.position.y, selectImage.transform.position.z);
+            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            if (dis < 0.01f || collisionTime > 2F)
-            {
-                move = false;
-                collisionTime = 0;
-                collisionState = false;
-                ActiveSelectImage(false);
-            }
-
-            if (collisionState)
-                collisionTime += GameManager.Instance.GetDeltaTimeByGameSpeed();
-
+            transform.position = new Vector3(pos.x, pos.y, transform.position.z);
         }
         else
         {
@@ -92,87 +72,22 @@ public class Turret : MonoBehaviour {
         }
     }
 
-    //public void Move(Vector3 moveTarget)
-    //{
-    //    move = true;
-    //    GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-    //    GetComponent<Rigidbody2D>().isKinematic = false;
-    //    this.moveTarget = moveTarget;
-    //}
-
     public void ActiveSelectImage(bool active)
     {
-        if (!active)
-            GameManager.Instance.selectedTurrets.Remove(this);
-
         selectImage.SetActive(active);
     }
 
     private void OnMouseDown()
     {
-        Turret[] beforeTurret = GameManager.Instance.selectedTurrets.ToArray();
-
-        if (beforeTurret.Length != 0)
-        {
-            foreach (Turret turret in beforeTurret)
-            {
-                if (turret.move)
-                    StartCoroutine(KinematicCorutine(turret));
-                else
-                {
-                    turret.GetComponent<Rigidbody2D>().isKinematic = true;
-                    turret.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-                }
-            }
-        }
-
-        if (move)
-        {
-            GetComponent<Rigidbody2D>().isKinematic = false;
-            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-        }
-        else
-        {
-            GetComponent<Rigidbody2D>().isKinematic = true;
-            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-        }
-
-        GameManager.Instance.selectedTurrets.Clear();
-        GameManager.Instance.selectedTurrets.Add(this);
         ActiveSelectImage(true);
+
+        move = true;
     }
 
-    private IEnumerator KinematicCorutine(Turret turret)
+    private void OnMouseUp()
     {
-        while (true)
-        {
-            // Finish Move
-            if (!turret.move)
-            {
-                turret.GetComponent<Rigidbody2D>().isKinematic = true;
-                turret.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+        ActiveSelectImage(false);
 
-                break;
-            }
-
-            yield return null;
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Turret")
-        {
-            collisionState = true;
-        }
-    }
-
-    private void OnCollisionExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Turret")
-        {
-            collisionTime = 0;
-            collisionState = false;
-        }
+        move = false;
     }
 }

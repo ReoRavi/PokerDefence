@@ -212,7 +212,7 @@ Transform:
   m_GameObject: {fileID: 1604837628741404}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 7, y: 0, z: -2}
-  m_LocalScale: {x: 3.5, y: 3.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4247211099899652}
   - {fileID: 4266071876250668}
@@ -228,7 +228,7 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604837628741404}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -255,7 +255,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 1.8
 --- !u!61 &61814953643261122
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -294,9 +294,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   move: 0
-  moveTarget: {x: 0, y: 0, z: 0}
-  collisionTime: 0
-  collisionState: 0
 --- !u!114 &114569097794271212
 MonoBehaviour:
   m_ObjectHideFlags: 1
