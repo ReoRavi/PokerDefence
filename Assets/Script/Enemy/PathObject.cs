@@ -9,7 +9,7 @@ public class PathObject : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		
+        pos = transform.position;
 	}
 	
 	// Update is called once per frame
