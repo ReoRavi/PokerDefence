@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PromptBullet : Bullet
 {
+    // Current Time
     private float time;
+    // Destoy Time
     private float maxTime;
 
     // Use this for initialization

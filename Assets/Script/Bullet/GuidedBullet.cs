@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GuidedBullet : Bullet
 {
+    // Start Positon (Turret Position)
     private Vector3 startPosition;
 
 	// Use this for initialization

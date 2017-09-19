@@ -104,9 +104,6 @@ public class GameManager : MonoBehaviour {
 
         state = eGameState.Wait;
 
-        //turrets = new List<Turret>();
-        //selectedTurrets = new List<Turret>();
-
         gameSpeed = 1;
     }
 

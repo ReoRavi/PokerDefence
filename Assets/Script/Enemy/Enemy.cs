@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
 
+    // Move Direction
     public Vector2 direction;
-
+    // HP Bar
     public GameObject hpBar;
-
+    // damaged HP Bar
     private GameObject damagedHpBar;
-
+    // Don't Apply to Enemy Rotation
     private Vector3 hpBarlocalScale;
-
+    // Max HP
     private float fullHp;
+    // Current HP
     private float hp;
-
-    private int moveState;
-
+    // Last Attack Time
     private float attackedTime;
 
     // Use this for initialization

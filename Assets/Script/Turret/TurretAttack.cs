@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class TurretAttack : MonoBehaviour {
 
-    [SerializeField]
     // Turret
     private Turret turret;
-    [SerializeField]
     // In Range Objects
     private List<Transform> rangeObject;
-    [SerializeField]
     // Currnet Target
     private Transform target;
 

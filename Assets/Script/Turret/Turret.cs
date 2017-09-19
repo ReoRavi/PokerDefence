@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour {
 
+    // Target Transform
     public Transform target;
-
+    // Attack Speed
     private float attackSpeed;
+    // Attack Count
     private int attackCount;
-
+    // Bullet Object
     private GameObject bullet;
+    // Bullet Create Time
     private float createTime;
-
+    // Move State
     public bool move;
-
+    // Damage
     private int damage;
-
+    // Turret Select Image
     private GameObject selectImage;
 
     // Use this for initialization

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PathObject : MonoBehaviour {
 
+    // Move Path
     public Vector3 path;
+    // Object Position
     public Vector3 pos;
 
     // Use this for initialization
